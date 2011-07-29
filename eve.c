@@ -254,9 +254,12 @@ int main(int argc,char **argv){
 		char *buffer=calloc(sbuffer,1);
 		int count=0;
 		while((count=recv(fdlsocket,buffer,sbuffer,0))>0){
-			printf("[<] lrecv [%s]\n",buffer);
+//			printf("[<] lrecv [%s]\n",buffer);
+			printf("\e[32m%s\e[0m",buffer);
+//			printf("%s",buffer);
+			fflush(stdout);
 			if(send(fdrsocket,buffer,count,0)!=-1){
-				printf("[>] rsent [%s]\n",buffer);
+//				printf("[>] rsent [%s]\n",buffer);
 			}
 			memset(buffer,'\0',sbuffer);
 		}
@@ -278,9 +281,12 @@ int main(int argc,char **argv){
 		char *buffer=calloc(sbuffer,1);
 		int count=0;
 		while((count=recv(fdrsocket,buffer,sbuffer,0))>0){
-			printf("[<] rrecv [%s]\n",buffer);
+//			printf("[<] rrecv [%s]\n",buffer);
+			printf("\e[34m%s\e[0m",buffer);
+//			printf("%s",buffer);
+			fflush(stdout);
 			if(send(fdlsocket,buffer,count,0)!=-1){
-				printf("[>] lsent [%s]\n",buffer);
+//				printf("[>] lsent [%s]\n",buffer);
 			}
 			memset(buffer,'\0',sbuffer);
 		}
