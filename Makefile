@@ -1,6 +1,6 @@
-OUTFILES           = build/dsv.o build/main.o build/tag.o build/util.o build/strnatcmp.o build/libtag.o
-TARGET             = build/tag
-INSTALL            = /usr/bin/tag
+OUTFILES           = build/eve.o
+TARGET             = build/eve
+INSTALL            = /usr/bin/eve
 
 SUCCESS_MSG        = '  [\e[32m DONE \e[0m]'
 
@@ -12,16 +12,12 @@ all: build
 
 build: $(TARGET)
 
-$(TARGET): $(OUTFILES) src/debug.h src/res.h
+$(TARGET): $(OUTFILES)
 	@echo 'Building target:'
 	@$(CC) $(CFLAGS) $^ -o $@
 	@echo -e $(SUCCESS_MSG)
 
-build/main.o: src/main.c src/debug.h src/res.h
-	@mkdir -p build/
-	@$(CC) $(CFLAGS) -c $< -o $@
-
-build/%.o: src/%.c
+build/eve.o: src/eve.c
 	@mkdir -p build/
 	@$(CC) $(CFLAGS) -c $< -o $@
 
