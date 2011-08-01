@@ -1,3 +1,4 @@
+#define _POSIX_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,34 +12,68 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 
-struct addrinfo {
-	int              ai_flags;
-	int              ai_family;
-	int              ai_socktype;
-	int              ai_protocol;
-	size_t           ai_addrlen;
-	struct sockaddr *ai_addr;
-	char            *ai_canonname;
-	struct addrinfo *ai_next;
-};
+
+//struct addrinfo {
+	//int              ai_flags;
+	//int              ai_family;
+	//int              ai_socktype;
+	//int              ai_protocol;
+	//size_t           ai_addrlen;
+	//struct sockaddr *ai_addr;
+	//char            *ai_canonname;
+	//struct addrinfo *ai_next;
+//};
 
 char *strdup(const char *s);
 
-int getaddrinfo(const char *node, const char *service,
-		const struct addrinfo *hints,
-		struct addrinfo **res);
+//int getaddrinfo(const char *node, const char *service,
+		//const struct addrinfo *hints,
+		//struct addrinfo **res);
 
 
 
 // get sockaddr, IPv4 or IPv6:
-void *get_in_addr(struct sockaddr *sa)
-{
-    if (sa->sa_family == AF_INET) {
-        return &(((struct sockaddr_in*)sa)->sin_addr);
-    }
+//void *get_in_addr(struct sockaddr *sa)
+//{
+    //if (sa->sa_family == AF_INET) {
+        //return &(((struct sockaddr_in*)sa)->sin_addr);
+    //}
 
-    return &(((struct sockaddr_in6*)sa)->sin6_addr);
+    //return &(((struct sockaddr_in6*)sa)->sin6_addr);
+//}
+
+
+
+int hexdump(char *data,int len,int size){
+	char *hex="0123456789ABCDEF";
+	for(int n=0;n<len;++n){
+		printf("%c%c ",hex[(unsigned char)data[n]>>4],hex[(unsigned char)data[n]&15]);
+	}
+	for(int n=len;n<size;++n){
+		printf("   ");
+	}
+	printf(" |");
+	for(int n=0;n<len;++n){
+		printf("%c",isprint(data[n])?data[n]:'.');
+	}
+	printf("|");
+	for(int n=len;n<size;++n){
+		printf(" ");
+	}
+	printf("\n");
+
+	return 0;
 }
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -66,8 +101,8 @@ int main(int argc,char **argv){
 
 
 	struct addrinfo hints, *servinfo, *p;
-	int rv,sockfd;
-	char s[INET6_ADDRSTRLEN];
+	//int rv,sockfd;
+	//char s[INET6_ADDRSTRLEN];
 
 
 	memset(&hints, 0, sizeof hints);
@@ -183,7 +218,7 @@ int main(int argc,char **argv){
 	}
 	puts("[+] getaddrinfo");
 
-	int rsocket=0;
+	//int rsocket=0;
 	//struct sockaddr_in *sa=NULL;
 	for(p=servinfo;p!=NULL;p=p->ai_next){
 		//printf("ai_flags: [%d]\n",p->ai_flags);
@@ -250,12 +285,14 @@ int main(int argc,char **argv){
 	if(child){//we are the server
 
 		puts("[!] server start");
-		int sbuffer=32;
+		int sbuffer=16;
 		char *buffer=calloc(sbuffer,1);
 		int count=0;
 		while((count=recv(fdlsocket,buffer,sbuffer,0))>0){
 //			printf("[<] lrecv [%s]\n",buffer);
-			printf("\e[32m%s\e[0m",buffer);
+			printf("\e[32m[>] ");
+			hexdump(buffer,count,sbuffer);
+			printf("\e[0m");
 //			printf("%s",buffer);
 			fflush(stdout);
 			if(send(fdrsocket,buffer,count,0)!=-1){
@@ -277,16 +314,18 @@ int main(int argc,char **argv){
 	}else{//we are the client
 
 		puts("[!] client start");
-		int sbuffer=32;
+		int sbuffer=16;
 		char *buffer=calloc(sbuffer,1);
 		int count=0;
 		while((count=recv(fdrsocket,buffer,sbuffer,0))>0){
-//			printf("[<] rrecv [%s]\n",buffer);
-			printf("\e[34m%s\e[0m",buffer);
-//			printf("%s",buffer);
+			//printf("[<] rrecv [%s]\n",buffer);
+			printf("\e[34m[<] ");
+			hexdump(buffer,count,sbuffer);
+			printf("\e[0m");
+			//printf("%s",buffer);
 			fflush(stdout);
 			if(send(fdlsocket,buffer,count,0)!=-1){
-//				printf("[>] lsent [%s]\n",buffer);
+				//printf("[>] lsent [%s]\n",buffer);
 			}
 			memset(buffer,'\0',sbuffer);
 		}
